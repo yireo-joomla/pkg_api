@@ -28,10 +28,8 @@ class ApiHandler implements ApiHandlerInterface
         $id = $input->getInt('id', 0);
         $this->model = $this->getModel($modelName, $id);
 
-        $methodName = $this->getMethodName($this->requestType);
-
         try {
-            $data = $this->model->$methodName();
+            $data = $this->makeMethodCallback($this->requestType, $this->model);
         } catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
         }
@@ -40,30 +38,37 @@ class ApiHandler implements ApiHandlerInterface
     }
 
     /**
-     * @param $requestType
+     * @param string $requestType
+     * @param object $model
      * @return string
      */
-    protected function getMethodName($requestType)
+    protected function makeMethodCallback(string $requestType, $model)
     {
         switch($requestType) {
             case 'delete':
                 $methodName = 'delete';
+                $methodArguments = []; // @todo
                 break;
 
             case 'put':
                 $methodName = 'save';
+                $methodArguments = []; // @todo
                 break;
 
             case 'get':
             default:
-                if ($this->input->getInt('id')) {
+                if ($this->input->getInt('id') && method_exists($model, 'getItem')) {
                     return 'getItem';
                 }
 
-                $methodName = 'getItems';
+                if (method_exists($model, 'getItems')) {
+                    return 'getItems';
+                }
+
+                $methodName = 'getData';
         }
 
-        return $methodName;
+        return $model->$methodName($methodArguments);
     }
 
     protected function getModel(string $modelName, int $id = 0)
