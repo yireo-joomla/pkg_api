@@ -96,7 +96,8 @@ class ApiController extends JControllerLegacy
     {
         $handlerFile = JPATH_SITE . '/components/com_' . $componentName . '/api.php';
 
-        if (!JFile::exists($handlerFile)) {
+        // @todo: The following has been deemed dangerous, even though it is very cool
+        if (!JFile::exists($handlerFile) && JFactory::getUser()->authorise('core.options')) {
             $handlerFile = JPATH_COMPONENT . '/api/handler.php';
         }
 
