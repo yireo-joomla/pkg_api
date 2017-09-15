@@ -44,7 +44,7 @@ class ApiHandler implements ApiHandlerInterface
      */
     protected function makeMethodCallback(string $requestType, $model)
     {
-        switch($requestType) {
+        switch ($requestType) {
             case 'delete':
                 $methodName = 'delete';
                 $methodArguments = []; // @todo
@@ -57,15 +57,16 @@ class ApiHandler implements ApiHandlerInterface
 
             case 'get':
             default:
+                $methodName = 'getData';
+                $methodArguments = [];
+
                 if ($this->input->getInt('id') && method_exists($model, 'getItem')) {
-                    return 'getItem';
+                    $methodName = 'getItem';
                 }
 
                 if (method_exists($model, 'getItems')) {
-                    return 'getItems';
+                    $methodName = 'getItems';
                 }
-
-                $methodName = 'getData';
         }
 
         return $model->$methodName($methodArguments);
@@ -103,7 +104,7 @@ class ApiHandler implements ApiHandlerInterface
         return $modelFile;
     }
 
-    protected function determineModelNameFromRequest(string $modelName, int $id = 0) : string
+    protected function determineModelNameFromRequest(string $modelName, int $id = 0): string
     {
         $modelName = strtolower($modelName);
 
