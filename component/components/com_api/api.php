@@ -10,10 +10,11 @@
 
 defined('_JEXEC') or die;
 
+use JFactory as Factory;
+
 jimport('joomla.filesystem.file');
+JLoader::registerNamespace('Api', __DIR__, false, false, 'psr4');
 
-require_once JPATH_COMPONENT . '/api/handler.php';
-
-$controller = JControllerLegacy::getInstance('api');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller = new Api\Controller;
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();

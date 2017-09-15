@@ -1,6 +1,9 @@
 <?php
+namespace Api\Handler;
 
-class UsersApiHandler extends ApiHandler
+use Api\Handler;
+
+class Users extends Handler
 {
     protected $allowedMethods = [
         'UsersModelUsers' => [
