@@ -3,8 +3,14 @@ require_once 'handler/interface.php';
 
 class ApiHandler implements ApiHandlerInterface
 {
+    /**
+     * @var string
+     */
     protected $component = '';
 
+    /**
+     * @var string
+     */
     protected $requestType = '';
 
     /**
@@ -12,6 +18,19 @@ class ApiHandler implements ApiHandlerInterface
      */
     protected $model;
 
+    /**
+     * @var string
+     */
+    protected $methodName = '';
+
+    /**
+     * @var array
+     */
+    protected $allowedMethods = [];
+
+    /**
+     * @var JInput
+     */
     protected $input;
 
     /**
@@ -25,7 +44,7 @@ class ApiHandler implements ApiHandlerInterface
         $this->requestType = $input->getMethod();
 
         $modelName = $input->getCmd('model');
-        $id = $input->getInt('id', 0);
+        $id = $this->getId($input);
         $this->model = $this->getModel($modelName, $id);
 
         try {
@@ -38,12 +57,22 @@ class ApiHandler implements ApiHandlerInterface
     }
 
     /**
+     * @param JInput $input
+     * @return int
+     */
+    protected function getId(JInput $input)
+    {
+        return $input->getInt('id', 0);
+    }
+
+    /**
      * @param string $requestType
      * @param object $model
      * @return string
      */
     protected function makeMethodCallback(string $requestType, $model)
     {
+        $requestType = strtolower($requestType);
         switch ($requestType) {
             case 'delete':
                 $methodName = 'delete';
@@ -57,19 +86,34 @@ class ApiHandler implements ApiHandlerInterface
 
             case 'get':
             default:
-                $methodName = 'getData';
-                $methodArguments = [];
+                $methodName = $this->getMethodFromRequest($model);
+        }
 
-                if ($this->input->getInt('id') && method_exists($model, 'getItem')) {
-                    $methodName = 'getItem';
-                }
-
-                if (method_exists($model, 'getItems')) {
-                    $methodName = 'getItems';
-                }
+        print_r($this->allowedMethods);
+        echo $model;exit;
+        if (!in_array($methodName, $this->allowedMethods[$model])) {
+            throw new Exception('Method is not allowed');
         }
 
         return $model->$methodName($methodArguments);
+    }
+
+    protected function getMethodFromRequest($model)
+    {
+        $methodFromRequest = $this->input->getString('method');
+        if (empty($methodFromRequest)) {
+            return false;
+        }
+
+        if (!method_exists($model, $methodFromRequest)) {
+            throw new Exception('Method ');
+        }
+
+        if (!is_callable([$model, $methodFromRequest])) {
+            return false;
+        }
+
+        return $methodFromRequest;
     }
 
     protected function getModel(string $modelName, int $id = 0)

@@ -23,6 +23,7 @@ class ApiRouter
 
         $vars['component'] = array_shift($segments);
         $vars['model'] = array_shift($segments);
+        $vars['method'] = array_shift($segments);
 
         if (!empty($segments) && is_numeric($segments[0]) && $segments[0] > 0) {
             $vars['id'] = $segments[0];

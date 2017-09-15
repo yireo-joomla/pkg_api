@@ -2,6 +2,15 @@
 
 class UsersApiHandler extends ApiHandler
 {
+    protected $allowedMethods = [
+        'UsersModelUsers' => [
+            'getItems',
+        ],
+        'UsersModelUser' => [
+            'getItem',
+        ]
+    ];
+
     protected function makeMethodCallback(string $requestType, $model)
     {
         $items = parent::makeMethodCallback($requestType, $model);
