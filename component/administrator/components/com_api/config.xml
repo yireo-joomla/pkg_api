@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+			name="component"
+			label="COM_API_COMPONENT_LABEL"
+			description="COM_API_COMPONENT_DESC"
+			>
+
+		<field
+			name="apikey-private"
+			type="text"
+			default=""
+			label="COM_API_FIELD_APIKEYPRIVATE_LABEL"
+			description="COM_API_FIELDAPIKEY_PRIVATE_DESC"
+			>
+		</field>
+
+		<field
+				name="apikey-public"
+				type="text"
+				default=""
+				label="COM_API_FIELD_APIKEYPUBLIC_LABEL"
+				description="COM_API_FIELDAPIKEY_PUBLIC_DESC"
+		>
+		</field>
+
+	</fieldset>
+
+	<fieldset
+			name="permissions"
+			description="JCONFIG_PERMISSIONS_DESC"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			>
+
+		<field
+			name="rules"
+			type="rules"
+			component="com_api"
+			filter="rules"
+			validate="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			section="component"
+			/>
+
+	</fieldset>
+
+</config>
