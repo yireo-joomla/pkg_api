@@ -1,7 +1,16 @@
 <?php
-require_once 'handler/interface.php';
 
-class ApiHandler implements ApiHandlerInterface
+namespace Api;
+
+use Api\Handler\HandlerInterface;
+use JInput as Input;
+use JText as Text;
+use JFile as File;
+use JFactory as Factory;
+use RuntimeException;
+use Exception;
+
+class Handler implements HandlerInterface
 {
     /**
      * @var string
@@ -29,15 +38,15 @@ class ApiHandler implements ApiHandlerInterface
     protected $allowedMethods = [];
 
     /**
-     * @var JInput
+     * @var Input
      */
     protected $input;
 
     /**
-     * @param JInput $input
+     * @param Input $input
      * @return mixed
      */
-    public function handle(JInput $input)
+    public function handle(Input $input)
     {
         $this->input = $input;
         $this->component = $input->get('component');
@@ -57,10 +66,10 @@ class ApiHandler implements ApiHandlerInterface
     }
 
     /**
-     * @param JInput $input
+     * @param Input $input
      * @return int
      */
-    protected function getId(JInput $input)
+    protected function getId(Input $input)
     {
         return $input->getInt('id', 0);
     }
@@ -135,7 +144,7 @@ class ApiHandler implements ApiHandlerInterface
         $modelClassName = ucfirst($this->component) . 'Model' . ucfirst($modelName);
 
         if (!class_exists($modelClassName)) {
-            throw new RuntimeException(JText::_('COM_API_MODEL_CLASS_NOT_FOUND'));
+            throw new RuntimeException(Text::_('COM_API_MODEL_CLASS_NOT_FOUND'));
         }
 
         $model = new $modelClassName;
@@ -147,12 +156,12 @@ class ApiHandler implements ApiHandlerInterface
     {
         $modelFile = JPATH_SITE . '/components/com_' . $this->component . '/models/' . $modelName . '.php';
 
-        if (!JFile::exists($modelFile) && JFactory::getUser()->authorise('core.options')) {
+        if (!File::exists($modelFile) && Factory::getUser()->authorise('core.options')) {
             $modelFile = JPATH_ADMINISTRATOR . '/components/com_' . $this->component . '/models/' . $modelName . '.php';
         }
 
-        if (!JFile::exists($modelFile)) {
-            throw new RuntimeException(JText::_('COM_API_MODEL_FILE_NOT_FOUND'));
+        if (!File::exists($modelFile)) {
+            throw new RuntimeException(Text::_('COM_API_MODEL_FILE_NOT_FOUND'));
         }
 
         return $modelFile;
