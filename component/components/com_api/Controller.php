@@ -19,7 +19,7 @@ use Api\Handler\HandlerInterface;
 use JFile as File;
 use JText as Text;
 use JComponentHelper as ComponentHelper;
-use JResponseJson as ResponseJson;
+use Joomla\CMS\Response\JsonResponse as JsonResponse;
 use InvalidArgumentException;
 use RuntimeException;
 use Exception;
@@ -66,12 +66,12 @@ class Controller extends BaseController
     }
 
     /**
-     * @param array $data
+     * @param mixed $data
      */
-    private function json(array $data)
+    private function json($data)
     {
         header('Content-Type: application/json');
-        echo new ResponseJson($data);
+        echo new JsonResponse($data);
         exit;
     }
 
