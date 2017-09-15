@@ -11,6 +11,21 @@ class UsersApiHandler extends ApiHandler
         ]
     ];
 
+    protected function getMethodName($model)
+    {
+        /**
+         * @todo: Should this kind of automatic logic allowed?
+         */
+        /*
+        $modelName = get_class($model);
+        if ($modelName === 'UsersModelUser') {
+            return 'getItem';
+        }
+        */
+
+        return parent::getMethodName($model);
+    }
+
     protected function makeMethodCallback(string $requestType, $model)
     {
         $items = parent::makeMethodCallback($requestType, $model);
