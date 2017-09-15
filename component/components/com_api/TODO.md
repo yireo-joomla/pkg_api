@@ -10,7 +10,6 @@
 - Discussion on how to pass arguments
 
 ## Cosmetic
-- Joomla 4 compatibility (namespaces)
 - Exception handling
 - Router update (J4)
 - Example API handler file per component
