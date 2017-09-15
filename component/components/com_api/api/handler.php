@@ -68,57 +68,67 @@ class ApiHandler implements ApiHandlerInterface
     /**
      * @param string $requestType
      * @param object $model
-     * @return string
+     * @return mixed
      */
     protected function makeMethodCallback(string $requestType, $model)
     {
+        $methodArguments = [];
         $requestType = strtolower($requestType);
         switch ($requestType) {
             case 'delete':
                 $methodName = 'delete';
-                $methodArguments = []; // @todo
                 break;
 
             case 'put':
                 $methodName = 'save';
-                $methodArguments = []; // @todo
                 break;
 
             case 'get':
             default:
-                $methodName = $this->getMethodFromRequest($model);
+                $methodName = $this->getMethodName($model);
         }
 
-        print_r($this->allowedMethods);
-        echo $model;exit;
-        if (!in_array($methodName, $this->allowedMethods[$model])) {
-            throw new Exception('Method is not allowed');
+        if ($methodName === 'info') {
+            return $this->allowedMethods;
+        }
+
+        if (!$this->isMethodAllowed($methodName, $model)) {
+            return false;
         }
 
         return $model->$methodName($methodArguments);
     }
 
-    protected function getMethodFromRequest($model)
+    protected function isMethodAllowed($methodName, $model)
     {
-        $methodFromRequest = $this->input->getString('method');
-        if (empty($methodFromRequest)) {
-            return false;
+        $modelName = get_class($model);
+        if (!isset($this->allowedMethods[$modelName]) || !in_array($methodName, $this->allowedMethods[$modelName])) {
+            throw new Exception('Method is not allowed');
         }
 
-        if (!method_exists($model, $methodFromRequest)) {
+        if (!method_exists($model, $methodName)) {
             throw new Exception('Method ');
         }
 
-        if (!is_callable([$model, $methodFromRequest])) {
+        if (!is_callable([$model, $methodName])) {
             return false;
         }
 
-        return $methodFromRequest;
+        return true;
+    }
+
+    protected function getMethodName($model)
+    {
+        $methodName = $this->input->getString('method');
+        if (empty($methodName)) {
+            return false;
+        }
+
+        return $methodName;
     }
 
     protected function getModel(string $modelName, int $id = 0)
     {
-        $modelName = $this->determineModelNameFromRequest($modelName, $id);
         $modelFile = $this->getModelFile($modelName);
         include_once $modelFile;
 
@@ -146,16 +156,5 @@ class ApiHandler implements ApiHandlerInterface
         }
 
         return $modelFile;
-    }
-
-    protected function determineModelNameFromRequest(string $modelName, int $id = 0): string
-    {
-        $modelName = strtolower($modelName);
-
-        if ($id > 0) {
-            $modelName = \Joomla\String\Inflector::getInstance()->toSingular($modelName);
-        }
-
-        return $modelName;
     }
 }
