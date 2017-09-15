@@ -68,7 +68,7 @@ class ApiController extends JControllerLegacy
         return new $handlerClassName;
     }
 
-    private function getApiHandlerClassName(string $componentName) : string
+    private function getApiHandlerClassName(string $componentName): string
     {
         $handlerClassName = ucfirst($componentName) . 'ApiHandler';
 
@@ -79,7 +79,7 @@ class ApiController extends JControllerLegacy
         return $handlerClassName;
     }
 
-    private function isApiAllowed(string $componentName) : bool
+    private function isApiAllowed(string $componentName): bool
     {
         if (JComponentHelper::isEnabled('com_' . $componentName) === false) {
             return false;
@@ -88,19 +88,53 @@ class ApiController extends JControllerLegacy
         return true;
     }
 
+    private function isValidToken()
+    {
+        return false;
+    }
+
+    private function isAuthorized()
+    {
+        if (JFactory::getUser()->authorise('core.options') === true) {
+            return true;
+        }
+
+        if ($this->isValidToken() === true) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param string $componentName
      * @return string
      */
-    private function getApiHandlerFilePerComponent(string $componentName) : string
+    private function getApiHandlerFilePerComponent(string $componentName): string
     {
-        $handlerFile = JPATH_SITE . '/components/com_' . $componentName . '/api.php';
-
-        // @todo: The following has been deemed dangerous, even though it is very cool
-        if (!JFile::exists($handlerFile) && JFactory::getUser()->authorise('core.options')) {
-            $handlerFile = JPATH_COMPONENT . '/api/handler.php';
+        $template = $this->app->getTemplate();
+        $handlerFile = JPATH_SITE . '/templates/' . $template . '/html/com_api/handler/' . $componentName . '.php';
+        if (JFile::exists($handlerFile)) {
+            return $handlerFile;
         }
 
-        return $handlerFile;
+        $handlerFile = JPATH_SITE . '/components/com_api/api/handler/' . $componentName . '.php';
+        if (JFile::exists($handlerFile)) {
+            return $handlerFile;
+        }
+
+        $handlerFile = JPATH_SITE . '/components/com_' . $componentName . '/api.php';
+        if (JFile::exists($handlerFile)) {
+            return $handlerFile;
+        }
+
+        // @todo: The following has been deemed dangerous, even though it is very cool
+        $handlerFile = JPATH_COMPONENT . '/api/handler.php';
+        if (JFile::exists($handlerFile) && $this->isAuthorized()) {
+            return $handlerFile;
+        }
+
+        // @todo: Create custom exception class
+        throw new \Exception('No Handler file found');
     }
 }
