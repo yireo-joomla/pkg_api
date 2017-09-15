@@ -27,8 +27,9 @@
 Babs mentioning Nooku: 3
 Jisse handling Babs in a bad way: 0
 Babs handling Jisse in a bad way: 0
-Peter mentioning / reacting on Linux: 11
+Peter mentioning / reacting on Linux: 16
 Roland mentioning Linux: 1
+Marcel mentioning Linux: 1
 
 ## Trucs
 Add Menu-Item of type External Link and add as URL:
