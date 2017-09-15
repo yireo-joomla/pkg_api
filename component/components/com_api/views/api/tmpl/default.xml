@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="com_api_entry_point_title">
+        <message>
+            <![CDATA[com_api_entry_point_desc]]>
+        </message>
+    </layout>
+
+    <!-- Add fields to the request variables for the layout. -->
+    <fields name="request">
+        <fieldset name="request">
+
+
+            <field
+                    name="api_component"
+                    type="text"
+                    label="COM_API_SELECT_COMPONENT_LABEL"
+                    description="COM_API_SELECT_COMPONENT_DESC"
+            />
+
+            <field
+                    name="api_model"
+                    type="text"
+                    label="COM_API_SELECT_MODEL_LABEL"
+                    description="COM_API_SELECT_MODEL_DESC"
+            />
+
+            <field
+                    name="api_params"
+                    type="text"
+                    label="COM_API_SELECT_PARAMS_LABEL"
+                    description="COM_API_SELECT_PARAMS_DESC"
+            />
+
+        </fieldset>
+    </fields>
+</metadata>
