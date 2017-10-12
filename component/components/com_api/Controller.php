@@ -77,6 +77,7 @@ class Controller extends BaseController
 
     /**
      * @return HandlerInterface
+     * @throws Exception
      */
     private function getApiHandler() : HandlerInterface
     {
